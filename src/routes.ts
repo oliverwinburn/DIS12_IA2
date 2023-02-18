@@ -25,7 +25,7 @@ const URLify = (URL: string) => "/" + encodeURI(URL.replaceAll("\\", "/").replac
 class File {
     URL: string;
     mimeType: string = "text/plain";
-    filePath: string | undefined;
+    filePath: string;
     readFunction: Function | undefined;
 
     public constructor(URL: string, filepath: string, readFunction?: (file: string) => Promise<string> | string) {
@@ -73,4 +73,7 @@ export function mapServerFiles() {
         new File(URL, file, (file) => fs.promises.readFile(file, "utf-8"))
     })
     console.log(`${serverRoutes.size} files loaded into directory`)
+    const display: Map<string, string> = new Map()
+    serverRoutes.forEach(file => display.set(file.URL, file.filePath))
+    console.log(display)
 }
