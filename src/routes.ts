@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import * as mime from "mime-types";
 import nunjucks from "nunjucks";
+import chalk from "chalk";
 
 nunjucks.configure({ autoescape: true, noCache: true })
 const nunjucksObject = { pagename: "Website" }
@@ -46,7 +47,7 @@ class File {
 export const serverRoutes: Map<String, File> = new Map()
 
 export function mapServerFiles() {
-    console.log("Loading files into server routes")
+    console.log(`[${chalk.green("LOAD")}] Loading files into server routes`)
     recursiveReadDir("src/scripts").forEach(file => {
         if (!file.endsWith('.js')) return
         const URL = URLify(file).replace('src', 'dist')
@@ -72,8 +73,8 @@ export function mapServerFiles() {
 
         new File(URL, file, (file) => fs.promises.readFile(file, "utf-8"))
     })
-    console.log(`${serverRoutes.size} files loaded into directory`)
-    const display: Map<string, string> = new Map()
-    serverRoutes.forEach(file => display.set(file.URL, file.filePath))
-    console.log(display)
+    console.log(`[${chalk.green("LOAD")}] ${chalk.blue(serverRoutes.size)} files loaded into directory`)
+    // const display: Map<string, string> = new Map()
+    // serverRoutes.forEach(file => display.set(file.URL, file.filePath))
+    // console.log(display)
 }

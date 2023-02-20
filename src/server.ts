@@ -1,7 +1,8 @@
 import { Server } from "http";
-
-// spooky route management
 import { mapServerFiles, serverRoutes } from "./routes";
+import { beginSerialMonitor } from "./serialmonitor";
+import chalk from "chalk";
+import { Readings, sequelize } from "./database";
 
 const PORT = 80;
 const HOST = "127.0.0.1"
@@ -17,7 +18,16 @@ const server = new Server(async (request, response) => {
         response.end(await file.read());
         return
     }
-    return response.writeHead(404).end(); 
+    return response.writeHead(404).end();
 })
 
-server.listen(PORT, HOST, () => {console.log(`Server started on http://${HOST}:${PORT}/`)})
+sequelize.sync({ force: process.argv.includes("--fsync") }).then((res) => {
+    console.log(`[${chalk.green("LOAD")}] Database loaded`)
+
+    // beginSerialMonitor()
+
+    server.listen(PORT, HOST, () => {
+        console.log(`[${chalk.green("LOAD")}] Server started on http://${HOST}:${PORT}/`)
+    })
+})
+
