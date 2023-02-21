@@ -14,5 +14,14 @@ export async function beginSerialMonitor() {
     const parser = new ReadlineParser({ delimiter: "\r\n" })
     port.pipe(parser)
 
-    parser.on("data", (data: string) => console.log(data))
+    parser.on("data", async (data: string) => {
+        try {
+            const parsed: {temperature: number, humidity: number} = JSON.parse(data)
+            console.log(parsed, parsed.temperature, parsed.humidity)
+            await Readings.insert(parsed.temperature, parsed.humidity).catch(e => console.log("db log failed"))
+        } catch (e) {
+            console.log("Data collection failed");
+            console.error(e)
+        }
+    })
 }

@@ -42,7 +42,7 @@ Readings.fetchAfter = async (timestamp: number) => {
                 [Op.gt]: timestamp
             }
         },
-        order: ["id", "desc"],
+        order: [["id", "DESC"]],
         limit: 10,
     })
 }

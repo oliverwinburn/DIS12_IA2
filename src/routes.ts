@@ -4,8 +4,8 @@ import * as mime from "mime-types";
 import nunjucks from "nunjucks";
 import chalk from "chalk";
 
+// const nunjucksObject = { pagename: "Website" }
 nunjucks.configure({ autoescape: true, noCache: true })
-const nunjucksObject = { pagename: "Website" }
 
 function recursiveReadDir(dir: string): string[] {
     let files: string[] = [];
@@ -59,14 +59,14 @@ export function mapServerFiles() {
         new File(URLify(file), file)
     });
 
-    const pageRemovals = ["index", ".html", "/pages"]
-    recursiveReadDir("pages/").forEach(file => {
-        if (file.includes("+")) return
-        let URL = URLify(file)
-        pageRemovals.forEach(term => URL = URL.replace(term, ""))
+    // const pageRemovals = ["index", ".html", "/pages"]
+    // recursiveReadDir("pages/").forEach(file => {
+    //     if (file.includes("+")) return
+    //     let URL = URLify(file)
+    //     pageRemovals.forEach(term => URL = URL.replace(term, ""))
 
-        new File(URL, file, (file) => nunjucks.render(file, nunjucksObject))
-    })
+        // new File(URL, file, (file) => nunjucks.render(file, nunjucksObject))
+    // })
 
     recursiveReadDir("css/").forEach(file => {
         const URL = "/dist" + URLify(file);
