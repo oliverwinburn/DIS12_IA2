@@ -25,7 +25,7 @@ const server = new Server(async (request, response) => {
 sequelize.sync({ force: process.argv.includes("--fsync") }).then((res) => {
     console.log(`[${chalk.green("LOAD")}] Database loaded`)
 
-    // beginSerialMonitor()
+    beginSerialMonitor()
 
     server.listen(PORT, HOST, () => {
         console.log(`[${chalk.green("LOAD")}] Server started on http://${HOST}:${PORT}/`)
