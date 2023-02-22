@@ -48,33 +48,22 @@ export const serverRoutes: Map<String, File> = new Map()
 
 export function mapServerFiles() {
     console.log(`[${chalk.green("LOAD")}] Loading files into server routes`)
-    recursiveReadDir("src/scripts").forEach(file => {
-        if (!file.endsWith('.js')) return
-        const URL = URLify(file).replace('src', 'dist')
-
-        new File(URL, file, (file) => fs.promises.readFile(file, "utf-8"))
-    });
-
-    recursiveReadDir("static/").forEach(file => {
-        new File(URLify(file), file)
-    });
-
-    // const pageRemovals = ["index", ".html", "/pages"]
-    // recursiveReadDir("pages/").forEach(file => {
-    //     if (file.includes("+")) return
-    //     let URL = URLify(file)
-    //     pageRemovals.forEach(term => URL = URL.replace(term, ""))
-
-        // new File(URL, file, (file) => nunjucks.render(file, nunjucksObject))
-    // })
-
-    recursiveReadDir("css/").forEach(file => {
-        const URL = "/dist" + URLify(file);
-
-        new File(URL, file, (file) => fs.promises.readFile(file, "utf-8"))
+    
+    new File("/dist/scripts/chart.js", "./src/scripts/chart.js", async (file) => {
+        const data = await fs.promises.readFile(file, "utf-8")
+        return data.substring(data.indexOf("\n") + 1)
     })
+    // recursiveReadDir("src/scripts").forEach(file => {
+    //     if (!file.endsWith('.js')) return
+    //     const URL = URLify(file).replace('src', 'dist')
+
+    //     new File(URL, file, (file) => fs.promises.readFile(file, "utf-8"))
+    // });
+
+    recursiveReadDir("static/").forEach(file => new File(URLify(file), file));
+    recursiveReadDir("css/").forEach(file =>
+        new File("/dist" + URLify(file), file, (file) => fs.promises.readFile(file, "utf-8"))
+    )
     console.log(`[${chalk.green("LOAD")}] ${chalk.blue(serverRoutes.size)} files loaded into directory`)
-    // const display: Map<string, string> = new Map()
-    // serverRoutes.forEach(file => display.set(file.URL, file.filePath))
-    // console.log(display)
+
 }

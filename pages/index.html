@@ -8,6 +8,8 @@
     <link rel="icon" type="image/png" href="/static/favicon.png">
     <link rel="stylesheet" href="/dist/css/global.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
+    <script src="/dist/scripts/chart.js" lang="javascript" defer></script>
     <title>UAP Warehouse Temperature Monitor</title>
 </head>
 
@@ -16,8 +18,10 @@
         <div class="logo"><img src="/static/logo.svg" alt="UAP Company Logo"></div>
     </div>
     <div class="content">
-        <div class="temp-display alarm"><span>25.3°C</span></div>
-        <div class="chart"><span>graph goes in here</span></div>
+        <div class="temp-display"><span id="temp-display">25.3°C</span></div>
+        <div class="chart">
+            <canvas id="chart"></canvas>
+        </div>
     </div>
 </body>
 
