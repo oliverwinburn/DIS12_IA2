@@ -51,7 +51,7 @@ export function mapServerFiles() {
     
     new File("/dist/scripts/chart.js", "./src/scripts/chart.js", async (file) => {
         const data = await fs.promises.readFile(file, "utf-8")
-        return data.substring(data.indexOf("\n") + 1)
+        return data.split("\n").slice(1).join("\n")
     })
     // recursiveReadDir("src/scripts").forEach(file => {
     //     if (!file.endsWith('.js')) return
