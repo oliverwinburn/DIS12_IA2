@@ -9,8 +9,9 @@ function decodeURL(url: string = "/") {
     const args: Map<string, string> = new Map()
     url = decodeURI(url)
     const splitString = url.split("?")
+    url = splitString.at(0) || "/"
     if (splitString.length == 1) return { url, args }
-    const params = splitString.slice(1, -1).join('?').split("&")
+    const params = splitString.pop()?.split("&") || []
     for (let i = 0; i < params.length; i++) {
         const pair = params[i].split("=")
         if (pair[0] && pair[1]) args.set(pair[0], pair[1])
@@ -27,7 +28,6 @@ function respond(response: ServerResponse, code: number, mimetype: string, data:
 
 export async function handleServer(request: IncomingMessage, response: ServerResponse) {
     const url = decodeURL(request.url || "/")
-
     // Should only be for static files
     const file = serverRoutes.get(url.url)
     if (file) {
@@ -44,6 +44,7 @@ export async function handleServer(request: IncomingMessage, response: ServerRes
         respond(response, 200, "text/json", readingsJSON)
     }
     else {
+        // could also redirect back to company website (or internal portal)
         response.writeHead(404).end();
     }
 }
