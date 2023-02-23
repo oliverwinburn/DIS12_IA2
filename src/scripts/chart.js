@@ -7,6 +7,7 @@ const tempDisplay = document.getElementById('temp-display')
 const canvas = document.getElementById("chart")
 const ctx = canvas.getContext('2d')
 
+
 /**
  * @type {{x: number, y: number}[]}
  */
@@ -68,23 +69,27 @@ async function insertData() {
     displayDataTemp.forEach(d => temperatureDataset.push(d))
     const maxTemp = displayDataTemp.at(-1)
     const cutoffTime = maxTemp.x - 35000
-    
+
     let i = temperatureDataset.length
     while (i--) {
         if (temperatureDataset[i].x < cutoffTime) {
             temperatureDataset.splice(i, 1)
-        } 
+        }
     }
 
     chart.options.scales.x.min = cutoffTime
     chart.options.scales.x.max = maxTemp.x + 3000
 
-    tempDisplay.innerText = `${maxTemp.y.toFixed(1)}°C`
-
     chart.update()
+
+    tempDisplay.innerText = `${maxTemp.y.toFixed(1)}°C`
+    try {
+        if (maxTemp.y > insideThreshold) {
+            tempDisplay.classList.add("alarm")
+        } else tempDisplay.classList.remove("alarm")
+    } catch {}
 }
 
-insertData()
-const beginInserter = () => dataInserter = setInterval(insertData, 1500)
+const beginInserter = () => { insertData(); dataInserter = setInterval(insertData, 1500) }
 const stopInserter = () => clearInterval(dataInserter)
 beginInserter()
