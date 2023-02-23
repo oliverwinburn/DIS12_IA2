@@ -48,11 +48,13 @@ export const serverRoutes: Map<String, File> = new Map()
 
 export function mapServerFiles() {
     console.log(`[${chalk.green("LOAD")}] Loading files into server routes`)
-    
+
     new File("/dist/scripts/chart.js", "./src/scripts/chart.js", async (file) => {
         const data = await fs.promises.readFile(file, "utf-8")
         return data.split("\n").slice(1).join("\n")
     })
+    new File("/dist/scripts/index.js", "./src/scripts/index.js", 
+        (f) => fs.promises.readFile(f, "utf-8"))
     // recursiveReadDir("src/scripts").forEach(file => {
     //     if (!file.endsWith('.js')) return
     //     const URL = URLify(file).replace('src', 'dist')
