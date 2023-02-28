@@ -16,17 +16,23 @@
 
 <body>
     <div class="header">
-        <div class="logo"><img src="/static/logo.svg" alt="UAP Company Logo"></div>
+        <a class="logo" href="https://uapcompany.com"><img src="/static/logo.svg" alt="UAP Company Logo"></a>
     </div>
     <div class="content">
         <div class="temp-display"><span id="temp-display">&nbsp</span></div>
         <div class="config">
-            <div class="title" onclick="">
+            <div class="title" id="configTitle">
                 <span>Threshold Configuration</span>
             </div>
             <div class="options closed" id="options">
-                <div class="inside">inside threshold</div>
-                <div class="outside">outside threshold</div>
+                <div class="inside option">
+                    <span>Inside: <span id="inReading"></span></span>
+                    <input type="range" min="10" max="50" value="30" class="slider" id="insideSlider">
+                </div>
+                <div class="outside option">
+                    <span>Outside: <span id="outReading"></span></span>
+                    <input type="range" min="10" max="50" value="30" class="slider" id="outsideSlider">
+                </div>
             </div>
         </div>
         <div class="chart">

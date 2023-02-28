@@ -46,12 +46,13 @@ const chart = new Chart(ctx, {
                 },
             }
         },
-        animation: false,
+        animation: false
     },
 })
 
 let latestTimestamp = 0
 let initialTime
+let currentTemp
 
 async function insertData() {
     /** @type {{id: number, timestamp: number, temperature: number, humidity: number}[]} */
@@ -83,8 +84,13 @@ async function insertData() {
     chart.update()
 
     tempDisplay.innerText = `${maxTemp.y.toFixed(1)}°C`
+    currentTemp = maxTemp.y
+    updateAlarm()
+}
+
+function updateAlarm() {
     try {
-        if (maxTemp.y > insideThreshold) {
+        if (currentTemp > insideThreshold) {
             tempDisplay.classList.add("alarm")
         } else tempDisplay.classList.remove("alarm")
     } catch {}
