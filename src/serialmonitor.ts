@@ -23,12 +23,9 @@ export async function beginSerialMonitor() {
 
     parser.on("data", async (data: string) => {
         try {
-            const parsed: {temperature: number, humidity: number} = JSON.parse(data)
-            console.log(parsed, parsed.temperature, parsed.humidity)
-            await Readings.insert(parsed.temperature, parsed.humidity).catch(e => console.log("db log failed"))
-        } catch (e) {
-            console.log("Data collection failed");
-            console.error(e)
-        }
+            const parsed: {temp: number, humidity: number} = JSON.parse(data)
+            await Readings.insert(parsed.temp, parsed.humidity)
+                .catch(e => console.log(`[${chalk.red("ERROR")}] Sensor log to database failed`))
+        } catch (e) { }
     })
 }
