@@ -15,7 +15,7 @@ let temperatureDataset = []
 /** @type {{x: number, y: number}[]} */
 let humidityDataset = []
 
-const options = (text) => {
+const options = (text, suggestedMin, suggestedMax) => {
     return {
         scales: {
             x: {
@@ -30,10 +30,11 @@ const options = (text) => {
                 type: "linear",
                 position: "left",
                 title: { text, display: true, font: { size: 16 }, },
-                suggestedMax: 30,
-                suggestedMin: 20,
+                suggestedMax, suggestedMin,
             }
-        }, animation: false,
+        },
+        animation: false,
+        elements: { point: { radius: 0 } }
     }
 }
 
@@ -42,7 +43,7 @@ const chartTemp = new Chart(ctxTemp, {
     data: {
         datasets: [{ label: "Temperature", data: temperatureDataset, tension: 0.3, }],
     },
-    options: options("Temperature (°C)")
+    options: options("Temperature (°C)", 20, 30)
 })
 
 const chartHumid = new Chart(ctxHumid, {
@@ -50,7 +51,7 @@ const chartHumid = new Chart(ctxHumid, {
     data: {
         datasets: [{ label: "Humidity", data: humidityDataset, tension: 0.3 }]
     },
-    options: options("Humidity")
+    options: options("Humidity", 50, 100)
 })
 
 let latestTimestamp = 0
@@ -76,7 +77,7 @@ async function insertData() {
     const cutoffTime = maxTemp.x - 35000
 
     for (let i = 0; i < temperatureDataset.length; i++) {
-        if(temperatureDataset[i].x < cutoffTime) {
+        if (temperatureDataset[i].x < cutoffTime) {
             temperatureDataset.splice(i, 1)
         }
     }
@@ -109,6 +110,6 @@ function updateAlarm() {
     } catch { }
 }
 
-const beginInserter = () => { insertData(); dataInserter = setInterval(insertData, 1500) }
+const beginInserter = () => { insertData(); dataInserter = setInterval(insertData, 1000) }
 const stopInserter = () => clearInterval(dataInserter)
 beginInserter()
