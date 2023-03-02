@@ -1,6 +1,6 @@
 import { Server } from "http";
 import { mapServerFiles, serverRoutes } from "./routes";
-import { beginSerialMonitor } from "./serialmonitor";
+import { beginSerialMonitor } from "./monitor";
 import chalk from "chalk";
 import { sequelize } from "./database";
 import { handleServer } from "./handler";
