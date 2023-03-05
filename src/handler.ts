@@ -1,6 +1,6 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { Readings } from "./database";
-import { serverRoutes } from "./routes";
+import { fetchDBAfter, Readings } from "./database.js";
+import { serverRoutes } from "./routes.js";
 import nunjucks from "nunjucks";
 //nunjucks is the node version of jinja (used with flask)
 
@@ -39,7 +39,8 @@ export async function handleServer(request: IncomingMessage, response: ServerRes
     }
     else if (url.url == "/api/fetch") {
         const timestamp = Number(url.args.get("timestamp")) || 0
-        const readings = await Readings.fetchAfter(timestamp)
+        const readings = await fetchDBAfter(timestamp)
+        // const readings = await Readings.fetchAfter(timestamp)
         const readingsJSON = JSON.stringify(readings, null, 2)
         respond(response, 200, "text/json", readingsJSON)
     }

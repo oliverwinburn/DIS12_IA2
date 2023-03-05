@@ -60,15 +60,16 @@ let currentTemp
 
 async function insertData() {
     /** @type {{id: number, timestamp: number, temperature: number, humidity: number}[]} */
-    const data = JSON.parse((await fetch(`/api/fetch?timestamp=${latestTimestamp}`).then(r => r.text())))
-    if (!data.length) return
-    data.sort((a, b) => a.timestamp - b.timestamp)
+    const APIData = JSON.parse((await fetch(`/api/fetch?timestamp=${latestTimestamp}`).then(r => r.text())))
+    const insideData = APIData.inside
+    if (!insideData.length) return
+    insideData.sort((a, b) => a.timestamp - b.timestamp)
 
-    latestTimestamp = data.at(-1).timestamp
-    if (!initialTime) initialTime = data.at(0).timestamp - 30000
+    latestTimestamp = insideData.at(-1).timestamp
+    if (!initialTime) initialTime = insideData.at(0).timestamp - 30000
 
-    const tempData = data.map(d => { return { x: d.timestamp - initialTime, y: d.temperature } })
-    const humidData = data.map(d => { return { x: d.timestamp - initialTime, y: d.humidity } })
+    const tempData = insideData.map(d => { return { x: d.timestamp - initialTime, y: d.temperature } })
+    const humidData = insideData.map(d => { return { x: d.timestamp - initialTime, y: d.humidity } })
 
     tempData.forEach(d => temperatureDataset.push(d))
     humidData.forEach(d => humidityDataset.push(d))

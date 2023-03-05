@@ -1,9 +1,9 @@
 import { Server } from "http";
-import { mapServerFiles, serverRoutes } from "./routes";
-import { beginSerialMonitor } from "./monitor";
+import { mapServerFiles, serverRoutes } from "./routes.js";
+import { beginBOMFetcher, beginSerialMonitor } from "./monitor.js";
 import chalk from "chalk";
-import { sequelize } from "./database";
-import { handleServer } from "./handler";
+import { sequelize } from "./database.js";
+import { handleServer } from "./handler.js";
 
 const PORT = 80;
 const HOST = "127.0.0.1"
@@ -26,6 +26,7 @@ sequelize.sync({ force: process.argv.includes("--fsync") }).then((res) => {
     console.log(`[${chalk.green("LOAD")}] Database loaded`)
 
     beginSerialMonitor()
+    beginBOMFetcher()
 
     server.listen(PORT, HOST, () => {
         console.log(`[${chalk.green("LOAD")}] Server started on http://${HOST}:${PORT}/`)

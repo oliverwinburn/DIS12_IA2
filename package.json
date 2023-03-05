@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "",
+  "type": "module",
   "scripts": {
     "test": "npx tsc && node dist/test.js",
-    "dev": "node dist/server.js --dev",
+    "site": "node dist/server.js",
     "build": "npx tsc --build --clean && npx tsc"
   },
   "author": "Oliver Winburn",
@@ -16,7 +17,10 @@
     "@types/nunjucks": "^3.2.1",
     "chalk": "^4.1.2",
     "chart.js": "^4.2.1",
+    "dotenv": "^16.0.3",
+    "https-proxy-agent": "^5.0.1",
     "mime-types": "^2.1.35",
+    "node-fetch": "^3.3.0",
     "nunjucks": "^3.2.3",
     "sequelize": "^6.28.0",
     "serialport": "^10.5.0",
