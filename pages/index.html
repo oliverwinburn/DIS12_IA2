@@ -19,7 +19,16 @@
         <a class="logo" href="https://uapcompany.com"><img src="/static/logo.svg" alt="UAP Company Logo"></a>
     </div>
     <div class="content">
-        <div class="temp-display"><span id="temp-display">&nbsp</span></div>
+        <div class="display-container" id="display-container">
+            <div class="display-element" id="internal-element">
+                <span class="label">Internal</span>
+                <span id="internal-display" class="display">00.0°C</span>
+            </div>
+            <div class="display-element" id="external-element">
+                <span class="label">External</span>
+                <span id="external-display" class="display">00.0°C</span>
+            </div>
+        </div>
         <div class="config">
             <div class="title" id="configTitle">
                 <span>Threshold Configuration</span>

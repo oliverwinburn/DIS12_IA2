@@ -1,7 +1,15 @@
 import { Chart } from "chart.js";
 
+
 /** @type {HTMLSpanElement} */
-const tempDisplay = document.getElementById('temp-display')
+const intDisplay = document.getElementById("internal-display")
+/** @type {HTMLSpanElement} */
+const extDisplay = document.getElementById("external-display")
+
+/** @type {HTMLDivElement} */
+const intDisplayElement = document.getElementById("internal-element")
+/** @type {HTMLDivElement} */
+const extDisplayElement = document.getElementById("external-element")
 
 /** @type {CanvasRenderingContext2D} */
 const ctxTemp = document.getElementById("chartTemp").getContext("2d")
@@ -9,11 +17,14 @@ const ctxTemp = document.getElementById("chartTemp").getContext("2d")
 /** @type {CanvasRenderingContext2D} */
 const ctxHumid = document.getElementById("chartHumid").getContext("2d")
 
-/** @type {{x: number, y: number}[]} */
-let temperatureDataset = []
+/** @typedef {{x: number, y: number}} Data */
+/** @typedef {Data[]} Dataset */
 
-/** @type {{x: number, y: number}[]} */
-let humidityDataset = []
+/** @type {Dataset} */ let tempDataset = []
+/** @type {Dataset} */ let humDataset = []
+/** @type {Dataset} */ let extTempDataset = []
+/** @type {Dataset} */ let extHumDataset = []
+
 
 const options = (text, suggestedMin, suggestedMax) => {
     return {
@@ -23,7 +34,7 @@ const options = (text, suggestedMin, suggestedMax) => {
                 position: 'bottom',
                 title: "Time",
                 time: { unit: "millisecond", },
-                ticks: { display: false, },
+                ticks: { display: false },
                 grid: { display: false, },
             },
             y: {
@@ -38,10 +49,14 @@ const options = (text, suggestedMin, suggestedMax) => {
     }
 }
 
+
 const chartTemp = new Chart(ctxTemp, {
     type: "line",
     data: {
-        datasets: [{ label: "Temperature", data: temperatureDataset, tension: 0.3, }],
+        datasets: [
+            { label: "Internal", data: tempDataset, tension: 0.3, },
+            { label: "External", data: extTempDataset, tension: 0.3, }
+        ],
     },
     options: options("Temperature (°C)", 20, 30)
 })
@@ -49,18 +64,40 @@ const chartTemp = new Chart(ctxTemp, {
 const chartHumid = new Chart(ctxHumid, {
     type: "line",
     data: {
-        datasets: [{ label: "Humidity", data: humidityDataset, tension: 0.3 }]
+        datasets: [
+            { label: "Internal", data: humDataset, tension: 0.3 },
+            { label: "External", data: extHumDataset, tension: 0.3, }
+        ]
     },
-    options: options("Humidity", 50, 100)
+    options: options("Humidity (%)", 50, 100)
 })
 
 let latestTimestamp = 0
 let initialTime
 let currentTemp
+let extCurTemp, extCurHum
+
+/** 
+ * @param {Dataset} dataset
+ * @param {number} cutoff */
+function spliceDataset(dataset, cutoff) {
+    for (let i = 0; i < dataset.length; i++) {
+        if (dataset[i].x < cutoff) {
+            dataset.splice(i, 1)
+        }
+    }
+
+}
 
 async function insertData() {
     /** @type {{id: number, timestamp: number, temperature: number, humidity: number}[]} */
     const APIData = JSON.parse((await fetch(`/api/fetch?timestamp=${latestTimestamp}`).then(r => r.text())))
+
+    if (APIData.outside) {
+        extCurTemp = APIData.outside.temperature
+        extCurHum = APIData.outside.humidity
+    }
+
     const insideData = APIData.inside
     if (!insideData.length) return
     insideData.sort((a, b) => a.timestamp - b.timestamp)
@@ -71,23 +108,17 @@ async function insertData() {
     const tempData = insideData.map(d => { return { x: d.timestamp - initialTime, y: d.temperature } })
     const humidData = insideData.map(d => { return { x: d.timestamp - initialTime, y: d.humidity } })
 
-    tempData.forEach(d => temperatureDataset.push(d))
-    humidData.forEach(d => humidityDataset.push(d))
+    tempData.forEach(d => { tempDataset.push(d); extTempDataset.push({ x: d.x, y: extCurTemp }) })
+    humidData.forEach(d => { humDataset.push(d); extHumDataset.push({ x: d.x, y: extCurHum }) })
+    // console.log(extCurHum, extHumDataset)
 
     const maxTemp = tempData.at(-1)
     const cutoffTime = maxTemp.x - 35000
 
-    for (let i = 0; i < temperatureDataset.length; i++) {
-        if (temperatureDataset[i].x < cutoffTime) {
-            temperatureDataset.splice(i, 1)
-        }
-    }
-
-    for (let i = 0; i < humidityDataset.length; i++) {
-        if (humidityDataset[i].x < cutoffTime) {
-            humidityDataset.splice(i, 1)
-        }
-    }
+    spliceDataset(tempDataset, cutoffTime)
+    spliceDataset(humDataset, cutoffTime)
+    spliceDataset(extTempDataset, cutoffTime)
+    spliceDataset(extHumDataset, cutoffTime)
 
     chartTemp.options.scales.x.min = cutoffTime
     chartHumid.options.scales.x.min = cutoffTime
@@ -98,7 +129,8 @@ async function insertData() {
     chartTemp.update()
     chartHumid.update()
 
-    tempDisplay.innerText = `${maxTemp.y.toFixed(1)}°C`
+    intDisplay.innerText = `${maxTemp.y.toFixed(1)}°C`
+    extDisplay.innerText = `${extCurTemp}°C`
     currentTemp = maxTemp.y
     updateAlarm()
 }
@@ -106,8 +138,17 @@ async function insertData() {
 function updateAlarm() {
     try {
         if (currentTemp > insideThreshold) {
-            tempDisplay.classList.add("alarm")
-        } else tempDisplay.classList.remove("alarm")
+            intDisplayElement.classList.add("alarm")
+        } else {
+            intDisplayElement.classList.remove("alarm")
+        }
+
+        if (extCurTemp > outsideThreshold) {
+            extDisplayElement.classList.add("alarm")
+        } else {
+            extDisplayElement.classList.remove("alarm")
+        }
+
     } catch { }
 }
 
