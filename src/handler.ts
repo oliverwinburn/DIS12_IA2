@@ -8,18 +8,19 @@ import * as mime from "mime-types";
 const routes: Map<string, { mime: string, data: string | Buffer }> = new Map()
 
 function register(route: string, file: string, encoding?: BufferEncoding) {
+    file = `./routes/${file}`
     routes.set(route, {
         mime: mime.lookup(file) || "text/plain",
         data: readFileSync(file, encoding)
     })
 }
-register("/", "./pages/index.html", "utf-8")
-register("/favicon.ico", "./static/favicon.ico")
+register("/", "index.html", "utf-8")
+register("/favicon.ico", "static/favicon.ico")
 
-register("/dist/global.css", "./css/global.css", "utf-8")
-register("/dist/chart.js", "./src/scripts/chart.js", "utf-8")
-register("/dist/index.js", "./src/scripts/index.js", "utf-8")
-register("/static/logo.svg", "./static/logo.svg")
+register("/dist/global.css", "dist/global.css", "utf-8")
+register("/dist/chart.js", "dist/chart.js", "utf-8")
+register("/dist/index.js", "dist/index.js", "utf-8")
+register("/static/logo.svg", "static/logo.svg")
 
 
 /** 
