@@ -25,7 +25,6 @@ export class BOMRecordings extends Model {
     static insert: (temperatue: number, apparentTemp: number, humidity: number) => Promise<BOMRecordings>;
 }
 
-
 Readings.init({
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     timestamp: DataTypes.INTEGER,

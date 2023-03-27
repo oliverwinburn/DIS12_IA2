@@ -1,20 +1,12 @@
-import { Chart } from "chart.js";
+// import { Chart } from "chart.js";
 
-
-/** @type {HTMLSpanElement} */
 const intDisplay = document.getElementById("internal-display")
-/** @type {HTMLSpanElement} */
 const extDisplay = document.getElementById("external-display")
 
-/** @type {HTMLDivElement} */
 const intDisplayElement = document.getElementById("internal-element")
-/** @type {HTMLDivElement} */
 const extDisplayElement = document.getElementById("external-element")
 
-/** @type {CanvasRenderingContext2D} */
 const ctxTemp = document.getElementById("chartTemp").getContext("2d")
-
-/** @type {CanvasRenderingContext2D} */
 const ctxHumid = document.getElementById("chartHumid").getContext("2d")
 
 /** @typedef {{x: number, y: number}} Data */
@@ -25,7 +17,7 @@ const ctxHumid = document.getElementById("chartHumid").getContext("2d")
 /** @type {Dataset} */ let extTempDataset = []
 /** @type {Dataset} */ let extHumDataset = []
 
-
+// Shared chart config
 const options = (text, suggestedMin, suggestedMax) => {
     return {
         scales: {
@@ -49,7 +41,7 @@ const options = (text, suggestedMin, suggestedMax) => {
     }
 }
 
-
+// Configure temperature chart
 const chartTemp = new Chart(ctxTemp, {
     type: "line",
     data: {
@@ -61,6 +53,7 @@ const chartTemp = new Chart(ctxTemp, {
     options: options("Temperature (°C)", 20, 30)
 })
 
+// Configure humidity chart
 const chartHumid = new Chart(ctxHumid, {
     type: "line",
     data: {
@@ -78,6 +71,7 @@ let currentTemp
 let extCurTemp, extCurHum
 
 /** 
+ * @desc In memory array manipulation because chart.js doesnt allow replacements (`dataset = dataset.splice(a, b)`)
  * @param {Dataset} dataset
  * @param {number} cutoff */
 function spliceDataset(dataset, cutoff) {

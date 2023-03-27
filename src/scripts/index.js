@@ -1,19 +1,19 @@
+// Thanks stackoverflow for the regex
 let insideThreshold = (document.cookie.match('inside=([^;].+?)(;|$)') || [])[1] || "25"
 let outsideThreshold = (document.cookie.match('outside=([^;].+?)(;|$)') || [])[1] || "25"
 
 
 const configButton = document.getElementById("configTitle")
 const configOptions = document.getElementById("options")
+
 configButton.onclick = () => {
     if (configOptions.classList.contains("closed")) {
         configOptions.classList.remove("closed")
     } else configOptions.classList.add("closed")
 }
 
-/** @type {HTMLInputElement} */
 const insideSlider = document.getElementById("insideSlider")
 const inReading = document.getElementById("inReading")
-/** @type {HTMLInputElement} */
 const outsideSlider = document.getElementById("outsideSlider")
 const outReading = document.getElementById("outReading")
 
