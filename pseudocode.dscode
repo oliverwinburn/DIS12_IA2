@@ -1,0 +1,51 @@
+// Fetch data from arduino and insert into database
+BEGIN
+    SET data TO latest line on serial port
+    SET parsedData TO data parsed into a JSON object
+    SET temperature TO temperature key of parsedData
+    SET humidity TO humidity key of parsedData
+    SET timestamp TO the current time of the system
+    INSERT temperature, humdity and timestamp INTO Readings
+END
+
+// Fetching data from BOM and storing into database
+BEGIN
+    SET reponse TO fetch from BOM API
+    SET data TO response parsed into a JSON object
+    SET temperature TO temperature key of data
+    SET humidity TO humidity key of data
+    INSERT temperature and humidity INTO BOMRecordings
+END
+
+// Fetch DB results after a timestamp
+BEGIN
+    SET internal TO the latest 10 values in the Readings table
+    SET external TO the latest recording in the BOMRecordings table
+    SET object TO JSON object containing internal and external variables
+    RETURN object
+END
+
+// HTTP server runtime handleServer
+BEGIN
+    SET URL TO url of request
+    IF URL is a file THEN
+        RETURN file contents to user
+    ELSEIF URL is /api/fetch THEN
+        SET timestamp TO timestamp attribute in URL OR 0
+        SET readings TO fetch DB results after timestamp
+        SET responseData TO readings parsed to a JSON storing
+        RETURN responseData to the user
+    ELSE
+        RETURN HTTP response code 404 to the user
+    ENDIF 
+END
+
+// Node server runtime
+BEGIN
+    RUN the database initialisation function
+    RUN the serial monitor
+    RUN the BOM fetcher
+    SET server TO new HTTP Server
+    SET callback of server TO handleServer function
+    RUN server on port 80 and host 127.0.0.1 (localhost)
+END
