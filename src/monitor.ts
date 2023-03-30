@@ -35,26 +35,20 @@ export async function beginSerialMonitor() {
 
 /** @desc Fetch data from BOM API */
 async function fetchBOMData() {
-    const response = await fetch(BOM_URL)
-    const data = JSON.parse(await response.text())
-
-    return {
-        temperature: data.observations.data[0].air_temp,
-        apparent_t: data.observations.data[0].apparent_t,
-        humidity: data.observations.data[0].rel_hum,
+    try {
+        const response = await fetch(BOM_URL)
+        const data = JSON.parse(await response.text())
+        const latest = data.observations.data[0]
+        return BOMRecordings.insert(latest.air_temp, latest.apparent_t, latest.rel_hum)
+    } catch (e) {
+        console.log(`[${chalk.red("ERROR")}] BOM Request failed`)
+        console.error(e)
     }
+    
 }
 
 export async function beginBOMFetcher() {
-    setInterval(async () => {
-        try {
-            const data = await fetchBOMData()
-            return BOMRecordings.insert(data.temperature, data.apparent_t, data.humidity)
-
-        } catch (e) {
-            console.log(`[${chalk.red("ERROR")}] BOM Request failed`)
-            console.error(e)
-        }
-    }, 5 * 60 * 1000) // loop interval every 5 minutes
+    await fetchBOMData()
+    setInterval(fetchBOMData, 5 * 60 * 1000) // loop interval every 5 minutes
 }
 
