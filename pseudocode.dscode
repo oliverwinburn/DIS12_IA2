@@ -5,12 +5,12 @@ BEGIN
     SET temperature TO temperature key of parsedData
     SET humidity TO humidity key of parsedData
     SET timestamp TO the current time of the system
-    INSERT temperature, humdity and timestamp INTO Readings
+    INSERT temperature, humidity, and timestamp INTO Readings
 END
 
 // Fetching data from BOM and storing into database
 BEGIN
-    SET reponse TO fetch from BOM API
+    SET response TO fetch from BOM API
     SET data TO response parsed into a JSON object
     SET temperature TO temperature key of data
     SET humidity TO humidity key of data
@@ -27,7 +27,7 @@ END
 
 // HTTP server runtime handleServer
 BEGIN
-    SET URL TO url of request
+    SET URL TO URL of request
     IF URL is a file THEN
         RETURN file contents to user
     ELSEIF URL is /api/fetch THEN
@@ -46,6 +46,6 @@ BEGIN
     RUN the serial monitor
     RUN the BOM fetcher
     SET server TO new HTTP Server
-    SET callback of server TO handleServer function
+    SET call back of server TO handleServer function
     RUN server on port 80 and host 127.0.0.1 (localhost)
 END
