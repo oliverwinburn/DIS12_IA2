@@ -9,7 +9,6 @@ export const sequelize = new Sequelize('database', "username", "password", {
 
 export class Readings extends Model {
     static insert: (temperature: number, humidity: number) => Promise<Readings>;
-    static fetchAfter: (timestamp: number) => Promise<Readings[]>;
     static id: number;
     static timestamp: number;
     static temperature: number;
@@ -22,7 +21,7 @@ export class BOMRecordings extends Model {
     static temperature: number;
     static apparentTemp: number;
     static humidity: number;
-    static insert: (temperatue: number, apparentTemp: number, humidity: number) => Promise<BOMRecordings>;
+    static insert: (temperature: number, apparentTemp: number, humidity: number) => Promise<BOMRecordings>;
 }
 
 Readings.init({
